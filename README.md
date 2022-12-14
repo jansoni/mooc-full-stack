@@ -2,7 +2,12 @@
 
 ## Part 0 | Summary
 
-### Document Object Model (DOM) | API
+### Techinal terms
+- Document Object Model (DOM) | API
+-
+-
+-
+
 ### HTTP methods
 - GET
 - POST
