@@ -1,10 +1,10 @@
 # Full stack course (MOOC)
 
-## Part 0 | Summary
+## Part 0 | Summary 
 
 ### Techinal terms
 - Document Object Model (DOM) | API
--
+- SPA (Single Page Application)
 -
 -
 
