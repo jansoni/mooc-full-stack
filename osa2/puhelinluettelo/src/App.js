@@ -1,5 +1,17 @@
 import { useState } from 'react'
 
+const UserRender = ({ data }) => {
+    return (
+    <div>
+      <ul>
+        {data.map(person => 
+          <li key={person.name}>{person.name} {person.number}</li>   
+        )}
+      </ul>
+    </div>
+    )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -65,11 +77,7 @@ const App = () => {
         <div><button type="submit" onClick={addName}>add</button></div>
       </form>
       <h2>Numbers</h2>
-      <ul>
-        {nameToShow.map(person => 
-          <li key={person.name}>{person.name} {person.number}</li>   
-        )}
-      </ul>
+      <UserRender data={nameToShow}/>
     </div>
   )
 
