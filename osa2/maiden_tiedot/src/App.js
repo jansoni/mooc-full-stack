@@ -1,77 +1,83 @@
 import { useState, useEffect} from "react";
 
-const Search = ({ data }) => {
-  const [countries, setCountries] = useState([])
-  const [filter, setFilter] = useState('')
-
-  const handleInput = (event) => {
+const Filter = ({filter, setFilter}) => {
+  const FilterFunc = (event) => {
     setFilter(event.target.value)
-    setCountries([])
-    data.forEach(country => {
-      if (country.name.common.match(filter))  {
-        setCountries((oldArray) => [...oldArray, country.name.common])
-      } 
-    })
-   }
-   if (countries.length === 1) {
-      return (
-        <div>
-          <form>
-            <div>find countries<input value={filter} onChange={handleInput}/></div>
-          </form>
-          <Country data={data} filter={filter}/>
-        </div>
-      ) 
-   } else {
-      return (
+  }  
+  return ( 
+    <form>
       <div>
-        <form>
-          <div>find countries<input value={filter} onChange={handleInput}/></div>
-        </form>
-        <ul>
-          {countries.map(country =>
-              <li key={country}> {country} <button>show</button></li>
-          )}
-        </ul>
+        find countries <input value={filter} onChange={FilterFunc}/>
       </div>
-    )
-   }
+    </form>
+  )
 }
 
-const Country = (props) => {
-  const info = []
-  props.data.forEach(country => {
-    if (country.name.common.match(props.filter)) {
-      info.push(country)
+const Countries = (props) => {
+  if (props.data != null) {
+    const filteredCountries = []
+    props.data.forEach(country => {
+      if (country.name.common.match(props.filter)) {
+        filteredCountries.push(country)
+      }
+    })
+    if (filteredCountries.length > 0 && filteredCountries.length < 11 && 
+      filteredCountries.length !== 1) {
+      return (
+        <div>
+          {filteredCountries.map(country => 
+          <p key={country.name.common}>{country.name.common}<button>show</button></p>
+          )}
+        </div>
+      )
+    } else if (filteredCountries.length === 1) {
+      return (
+        <Country data={filteredCountries}/>
+      )
+    } else {
+      return (
+        <p>Too many matches</p>
+      )
     }
-  })
-  console.log(info)
+  }
+}
+
+const Country = ({ data }) => {
+  const languages = [] 
+  Object.values(data[0].languages).forEach(val =>
+    languages.push(val)
+  )
 
   return (
     <div>
-      <h1>{info[0].name.common}</h1>
+      <h1>{data[0].name.common}</h1>
+      <p>capital {data[0].capital}</p>
+      <p>area {data[0].area}</p>
       <br/>
-      <p>capital {info[0].capital[0]}</p>
-      <p>area {info[0].area}</p>
-      <br/>
-      <strong>languages:</strong>
-      <br/>
-      <img src={info[0].flags.png}/>
+      <strong>languages</strong>
+      {languages.map(language => 
+        <p key={language}>{language}</p> 
+     )}
+     <img src={data[0].flags.png}/>
+     <Weather/>
     </div>
   )
 }
 
-const Weather = ({ data }) => {
+const Weather = () => {
 
 }
 
+const Button = () => {
 
+}
 
 function App() {
   const url = 'https://restcountries.com/v3.1/all'
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [filter, setFilter] = useState('')
 
   useEffect(() => {
     fetch(url)
@@ -87,7 +93,14 @@ function App() {
 
   return (
     <div>
-      <Search data={data}/>
+      <Filter
+      filter={filter} 
+      setFilter={setFilter}
+      />
+      <Countries
+      filter={filter}
+      data={data}
+      />
     </div>
   );
 }
