@@ -1,86 +1,112 @@
-import { useState } from 'react'
+import {useState, useEffect} from 'react'
+import axios from 'axios'
 
-const UserRender = ({ data }) => {
+const Filter = ({filter, setFilter}) => {
+  const FilterFunc = (event) => {
+    setFilter(event.target.value)
+  }  
+  return ( 
+      <form>
+        <div>
+          filter show with<input value={filter} onChange={FilterFunc}/>
+        </div>
+      </form>
+  )
+}
+
+const PersonForm = ({data, setData}) => {
+  const [name, setName] = useState('')
+  const [number, setNumber] = useState('')
+  const NameField = (event) => {
+    setName(event.target.value)  
+  }
+  const NumberField = (event) => {
+    setNumber(event.target.value) 
+  }
+  const addNumber = (event) => {
+    let name_reserver = false
+    data.forEach(element => {
+      if (element.name === name) {
+        name_reserver = true
+        alert(`${name} is reserved`)
+      }
+    });
+    if (name_reserver === false) {
+      event.preventDefault()
+      const personObject = {
+        name: name,
+        number: number,
+        id: data.length + 1,
+      }
+      setData(data.concat(personObject))
+    }
+  }
+  return (
+    <form>
+      <div>name:<input value={name} onChange={NameField}/></div>
+      <div>number:<input value={number} onChange={NumberField}/></div>
+      <button onClick={addNumber}>add</button>
+    </form>
+  )
+}
+
+const Persons = ({data, filter}) => {
+  if (filter === "") {
     return (
-    <div>
-      <ul>
-        {data.map(person => 
-          <li key={person.name}>{person.name} {person.number}</li>   
+      <div>
+        {data.map(element => 
+          <p key={element.id}>{element.name} {element.number}</p>  
         )}
-      </ul>
-    </div>
+      </div>
     )
+  } else {
+    const filtered = [] 
+    data.forEach(element => {
+      if (element.name.match(filter)) {
+        filtered.push(element)
+      }
+    });
+    return (
+      <div>
+        {filtered.map(element => 
+          <p key={element.id}>{element.name} {element.number}</p>  
+        )}
+      </div>
+    )
+  }
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ]) 
-  const [newName, setNewName] = useState('')
-  const [newPhone, setNewPhone] = useState('')
+  const URL = 'http://localhost:3001/persons'
+  const [data, setData] = useState([])
   const [filter, setFilter] = useState('')
-  const [showAll,setShowAll] = useState(true)
-  const handleNewName = (event) => {
-    setNewName(event.target.value)
-  }
-
-  const handleNewNumber = (event) => {
-    setNewPhone(event.target.value)
-  }
-
-  const setFilterFunc = (event) => {
-    setFilter(event.target.value)
-    if (filter.length === 0) {
-      setShowAll(false)
-    } 
-  }
-
-  const addName = (event) => {
-    let nameUnique = true
-    event.preventDefault()
-    const nameObject = {
-      name: newName,
-      number: newPhone,
-    }
-    persons.forEach(person => {
-      if (person.name === nameObject.name) {
-        nameUnique = false
-      }
+  useEffect(() => {
+  axios
+    .get(URL)
+    .then(response => {
+      setData(response.data)
     })
-    if (nameUnique === true) {
-      setPersons(persons.concat(nameObject))
-    } else {
-      alert(`${newName} is already added to phonebook`)
-    }
-
-    setNewName('')
-    setNewPhone('')
-  }
-
-  const nameToShow = showAll 
-    ? persons 
-    : persons.filter(person => person.name.match(filter)) 
+  }, [])
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>filter shown with<input value={filter} onChange={setFilterFunc}/></div>
-      </form>
-      <form>
-        <h2>add a new</h2>
-        <div>name: <input value={newName} onChange={handleNewName}/></div>
-        <div>number:<input value={newPhone} onChange={handleNewNumber}/></div>
-        <div><button type="submit" onClick={addName}>add</button></div>
-      </form>
-      <h2>Numbers</h2>
-      <UserRender data={nameToShow}/>
+      <Filter
+      filter={filter} 
+      setFilter={setFilter}
+      />
+      <h3>Add a new</h3>
+      <PersonForm 
+      data={data}
+      setData={setData}
+      />
+      <h3>Numbers</h3>
+      <Persons
+      data={data}
+      filter={filter}
+      />
     </div>
   )
-
 }
 
 export default App
