@@ -26,7 +26,9 @@ const Countries = (props) => {
       return (
         <div>
           {filteredCountries.map(country => 
-          <p key={country.name.common}>{country.name.common}<button>show</button></p>
+            <p key={country.name.common}>{country.name.common}
+              <button onClick={() => showCountry(country)}>show</button>
+            </p>
           )}
         </div>
       )
@@ -40,6 +42,12 @@ const Countries = (props) => {
       )
     }
   }
+}
+
+const showCountry = (country) => {
+  return (
+    <Country data={country}/>
+  )
 }
 
 const Country = ({ data }) => {
@@ -58,25 +66,15 @@ const Country = ({ data }) => {
       {languages.map(language => 
         <p key={language}>{language}</p> 
      )}
-     <img src={data[0].flags.png}/>
-     <Weather/>
+     <img src={data[0].flags.png} alt="flag"/>
     </div>
   )
-}
-
-const Weather = () => {
-
-}
-
-const Button = () => {
-
 }
 
 function App() {
   const url = 'https://restcountries.com/v3.1/all'
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
