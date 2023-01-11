@@ -1,9 +1,11 @@
 # Full stack course (MOOC)
 
-## Part 0 | Summary 
+## &#9745; Part 0    
 
-## Part 1 | Summary
+## &#9745; Part 1  
 
-## Part 2 | Summary
+## &#9745; Part 2   
 
-#### Source: https://fullstackopen.com/
+## &#9746; Part 3
+
+### Source: https://fullstackopen.com/
